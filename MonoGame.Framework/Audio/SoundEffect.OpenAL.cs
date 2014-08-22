@@ -2,6 +2,7 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 ﻿
+#if !(ANDROID && !OPENAL)
 using System;
 using System.IO;
 
@@ -20,7 +21,6 @@ using MonoTouch.AVFoundation;
 using MonoTouch.Foundation;
 #endif
 #endif
-
 namespace Microsoft.Xna.Framework.Audio
 {
     public sealed partial class SoundEffect : IDisposable
@@ -184,4 +184,5 @@ namespace Microsoft.Xna.Framework.Audio
         }
     }
 }
+#endif
 

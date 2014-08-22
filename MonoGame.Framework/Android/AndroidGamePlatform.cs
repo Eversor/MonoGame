@@ -123,11 +123,14 @@ namespace Microsoft.Xna.Framework
             if (!IsActive)
             {
                 IsActive = true;
-				_gameWindow.GameView.Resume();
-				if(_MediaPlayer_PrevState == MediaState.Playing && Game.Activity.AutoPauseAndResumeMediaPlayer)
-                	MediaPlayer.Resume();
-				if (!_gameWindow.GameView.IsFocused)
-					_gameWindow.GameView.RequestFocus();
+		_gameWindow.GameView.Resume();
+		#if (ANDROID || OUYA) && (!OPENAL)
+		SoundEffectInstance.SoundPool.AutoResume();
+		#endif
+		if(_MediaPlayer_PrevState == MediaState.Playing && Game.Activity.AutoPauseAndResumeMediaPlayer)
+			MediaPlayer.Resume();
+		if (!_gameWindow.GameView.IsFocused)
+			_gameWindow.GameView.RequestFocus();
             }
         }
 
@@ -138,11 +141,14 @@ namespace Microsoft.Xna.Framework
             if (IsActive)
             {
                 IsActive = false;
-				_MediaPlayer_PrevState = MediaPlayer.State;
-				_gameWindow.GameView.Pause();
-				_gameWindow.GameView.ClearFocus();
-				if(Game.Activity.AutoPauseAndResumeMediaPlayer)
-                	MediaPlayer.Pause();
+		_MediaPlayer_PrevState = MediaPlayer.State;
+		_gameWindow.GameView.Pause();
+		_gameWindow.GameView.ClearFocus();
+		#if (ANDROID || OUYA) && (!OPENAL)
+		SoundEffectInstance.SoundPool.AutoPause();
+		#endif
+		if(Game.Activity.AutoPauseAndResumeMediaPlayer)
+			MediaPlayer.Pause();
             }
         }
 
