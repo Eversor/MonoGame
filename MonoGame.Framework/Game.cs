@@ -200,6 +200,7 @@ namespace Microsoft.Xna.Framework
         public bool IsActive
         {
             get { return Platform.IsActive; }
+            set { Platform.IsActive = value; }
         }
 
         public bool IsMouseVisible
