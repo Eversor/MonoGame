@@ -13,6 +13,8 @@ using MonoMac.Foundation;
 using MonoTouch.UIKit;
 #elif ANDROID
 using Android.Views;
+#elif WINDOWS_PHONE
+using System.Windows;
 #endif
 
 namespace Microsoft.Xna.Framework.Graphics
