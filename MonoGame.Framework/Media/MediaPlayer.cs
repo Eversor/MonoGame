@@ -138,7 +138,7 @@ namespace Microsoft.Xna.Framework.Media
 			PlaySong(_queue.ActiveSong);
 		}
 
-        public static int stopReqNumber = 0;
+        //public static int stopReqNumber = 0;
 
         private static void PlaySong(Song song)
         {            
@@ -195,8 +195,9 @@ namespace Microsoft.Xna.Framework.Media
         {
             if (State == MediaState.Stopped)
                 return;
-
+#if WP
             stopReqNumber++;
+#endif
             PlatformStop();
             State = MediaState.Stopped;
         }
