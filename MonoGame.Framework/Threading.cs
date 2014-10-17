@@ -142,7 +142,7 @@ namespace Microsoft.Xna.Framework
                     action();
                     wait.Set();
                 });
-                wait.WaitOne(kMaxWaitForUIThread);
+                wait.WaitOne();
             }
         }
 #endif
