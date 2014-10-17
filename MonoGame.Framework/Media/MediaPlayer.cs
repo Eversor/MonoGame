@@ -121,7 +121,7 @@ namespace Microsoft.Xna.Framework.Media
             _numSongsInQueuePlayed = 0;
             _queue.Add(song);
 			_queue.ActiveSongIndex = 0;
-            
+
             PlaySong(song);
         }
 		
@@ -138,10 +138,12 @@ namespace Microsoft.Xna.Framework.Media
 			PlaySong(_queue.ActiveSong);
 		}
 
-        //public static int stopReqNumber = 0;
+        public static int stopReqNumber = 0;
 
         private static void PlaySong(Song song)
-        {            
+        {
+            //System.Diagnostics.Debugger.Log(1, "SOUND", "PLAY Chiamato \n ");
+
             PlatformPlaySong(song);
             State = MediaState.Playing;
             //stopReqNumber = 0;
@@ -195,9 +197,9 @@ namespace Microsoft.Xna.Framework.Media
         {
             if (State == MediaState.Stopped)
                 return;
-#if WP
+            //System.Diagnostics.Debugger.Log(1, "SOUND", "STOP Chiamato \n");
             stopReqNumber++;
-#endif
+
             PlatformStop();
             State = MediaState.Stopped;
         }
