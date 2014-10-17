@@ -138,10 +138,13 @@ namespace Microsoft.Xna.Framework.Media
 			PlaySong(_queue.ActiveSong);
 		}
 
+        public static int stopReqNumber = 0;
+
         private static void PlaySong(Song song)
-        {
+        {            
             PlatformPlaySong(song);
             State = MediaState.Playing;
+            //stopReqNumber = 0;
         }
 
         internal static void OnSongFinishedPlaying(object sender, EventArgs args)
@@ -193,9 +196,10 @@ namespace Microsoft.Xna.Framework.Media
             if (State == MediaState.Stopped)
                 return;
 
+            stopReqNumber++;
             PlatformStop();
-			State = MediaState.Stopped;
-		}
+            State = MediaState.Stopped;
+        }
 		
 		public static void MoveNext()
 		{

@@ -237,8 +237,10 @@ namespace Microsoft.Xna.Framework.Media
 
                 Deployment.Current.Dispatcher.BeginInvoke(() =>
                 {
+                    System.Diagnostics.Debugger.Log(1, "SOUND", "PLAY Effettuato\n ");
                     _mediaElement.Source = new Uri(song.FilePath, UriKind.Relative);
                     _mediaElement.Play();
+                    MediaPlayer.stopReqNumber = 0 ;
 
                     // Ensure only one subscribe
                     _mediaElement.MediaEnded -= OnSongFinishedPlaying;
@@ -278,7 +280,14 @@ namespace Microsoft.Xna.Framework.Media
             {
                 Deployment.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    _mediaElement.Stop();
+                    if (MediaPlayer.stopReqNumber > 0)
+                    {
+                        System.Diagnostics.Debugger.Log(1, "SOUND", "STOP Effettuato\n ");
+                        _mediaElement.Stop();
+                        MediaPlayer.stopReqNumber--;
+                    }
+                    else
+                    { System.Diagnostics.Debugger.Log(1, "SOUND", "MediaPlayer.stopReqNumber = 0  -> STOP non effettuato\n "); }
                 });
             }
         }
