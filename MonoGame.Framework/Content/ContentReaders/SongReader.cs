@@ -51,6 +51,8 @@ namespace Microsoft.Xna.Framework.Content
 	{
 #if ANDROID
         static string[] supportedExtensions = new string[] { ".mp3", ".ogg", ".mid" };
+#elif IOS
+        static string[] supportedExtensions = new string[] { ".mp3", ".m4a" };
 #else
         static string[] supportedExtensions = new string[] { ".mp3" };
 #endif
