@@ -5,6 +5,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+
+
 #if WINRT
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
@@ -71,10 +73,14 @@ namespace Microsoft.Xna.Framework
             _services.AddService(typeof(GamePlatform), Platform);
 
 #if WINDOWS_STOREAPP && !WINDOWS_PHONE81
-            Platform.ViewStateChanged += Platform_ApplicationViewChanged;
+			Platform.ViewStateChanged += Platform_ApplicationViewChanged;
+#elif IOS
+			iosRViewController=((iOSGamePlatform)Platform).ViewController;
 #endif
         }
-
+		#if IOS
+		public MonoTouch.UIKit.UIViewController iosRViewController;
+		#endif
         ~Game()
         {
             Dispose(false);
@@ -173,7 +179,7 @@ namespace Microsoft.Xna.Framework
         public static AndroidGameActivity Activity { get; internal set; }
 #endif
         private static Game _instance = null;
-        internal static Game Instance { get { return Game._instance; } }
+        public static Game Instance { get { return Game._instance; } }
 
         public LaunchParameters LaunchParameters { get; private set; }
 

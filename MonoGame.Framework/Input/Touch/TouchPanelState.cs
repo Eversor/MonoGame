@@ -730,5 +730,11 @@ namespace Microsoft.Xna.Framework.Input.Touch
         }
 
         #endregion
+
+		public void Clear()
+		{
+			_touchState.Clear ();
+			_gestureState.Clear ();
+		}
     }
 }
