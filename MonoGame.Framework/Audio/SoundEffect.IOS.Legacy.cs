@@ -31,37 +31,7 @@ namespace Microsoft.Xna.Framework.Audio
         #endregion
 
         #region Public Constructors
-		#if IOS || MAC
-		internal SoundEffect (string fileName)
-		{
 
-			if (fileName == string.Empty) {
-				throw new FileNotFoundException ("Supported Sound Effect formats are wav, mp3, acc, aiff");
-			}
-
-			int size;
-			OpenTK.Audio.OpenAL.ALFormat format;
-			double rate;
-			double duration;
-
-			try {
-				_data = OpenALSupport.LoadFromFile (fileName,
-					out size, out format, out rate, out duration);
-			}
-			catch(Exception ex) {
-				throw new Content.ContentLoadException("Could not load audio data", ex);
-			}
-
-			_name = Path.GetFileNameWithoutExtension (fileName);
-
-			Rate = (float)rate;
-			Size = size;
-			Format = format;
-			_duration = TimeSpan.FromSeconds (duration);
-			//Console.WriteLine ("From File: " + _name + " - " + Format + " = " + Rate + " / " + Size + " -- "  + Duration);
-
-		}
-		#endif
         /// <param name="buffer">Buffer containing PCM wave data.</param>
         /// <param name="sampleRate">Sample rate, in Hertz (Hz)</param>
         /// <param name="channels">Number of channels (mono or stereo).</param>
