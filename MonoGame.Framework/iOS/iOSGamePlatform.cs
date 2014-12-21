@@ -221,9 +221,10 @@ namespace Microsoft.Xna.Framework
             //        functionality is actually implemented.  At that
             //        point, it should be possible to pass Game.Tick
             //        directly to NSTimer.CreateRepeatingTimer.
-            _viewController.View.MakeCurrent();
-            Game.Tick ();
-
+			_viewController.View.MakeCurrent();
+			Threading.Run();
+			Game.Tick ();
+			Threading.Run();
             if (!IsPlayingVideo)
             {
                 if (Game.GraphicsDevice != null)

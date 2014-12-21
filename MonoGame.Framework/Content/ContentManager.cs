@@ -253,10 +253,9 @@ namespace Microsoft.Xna.Framework.Content
 			Stream stream;
 			try
             {
-                string assetPath = Path.Combine(RootDirectory, assetName) ;
-                if (!Path.HasExtension(assetPath))
-                    assetPath += ".xnb";
-
+                string assetPath = Path.Combine(RootDirectory, assetName);
+				if(!Path.HasExtension(assetName))
+					assetPath+= ".xnb";
                 stream = TitleContainer.OpenStream(assetPath);
 
 #if ANDROID
@@ -421,7 +420,9 @@ namespace Microsoft.Xna.Framework.Content
             else if ((typeof(T) == typeof(SoundEffect)))
             {
 		#if ANDROID && !OPENAL
-		return new SoundEffect(assetName);
+				return new SoundEffect(assetName);
+		#elif IOS
+				return new SoundEffect(assetName);
 		#else
                 using (Stream s = TitleContainer.OpenStream(assetName))
                     return SoundEffect.FromStream(s);

@@ -41,7 +41,7 @@ namespace Microsoft.Xna.Framework.Media
         }
 
         private void PlatformInitialize(NSUrl url)
-        {
+		{
             _sound = AVPlayerItem.FromUrl(url);
             _player = AVPlayer.FromPlayerItem(_sound);
             playToEndObserver = AVPlayerItem.Notifications.ObserveDidPlayToEndTime(OnFinishedPlaying);

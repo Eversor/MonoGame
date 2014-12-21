@@ -74,7 +74,7 @@ namespace Microsoft.Xna.Framework.Audio
 #endif
 
 #if MONOMAC || IOS
-
+			//Ok so this works only for WAV, we use audioFileStream to get sampling data etc...
             var audiodata = new byte[s.Length];
             s.Read(audiodata, 0, (int)s.Length);
 
