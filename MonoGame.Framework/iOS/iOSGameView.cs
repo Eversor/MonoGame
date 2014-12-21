@@ -278,14 +278,16 @@ namespace Microsoft.Xna.Framework {
 					0, 0,
 					pp.BackBufferWidth,
 					pp.BackBufferHeight);
-				
+
 				// FIXME: These static methods on GraphicsDevice need
 				//        to go away someday.
 				gds.GraphicsDevice.glFramebuffer = _framebuffer;
 			}
-
+			//EVERSOR we don't need to set this as GPU stuff is done on the main thread (i hope)
+			#if FALSE
             if (Threading.BackgroundContext == null)
                 Threading.BackgroundContext = new MonoTouch.OpenGLES.EAGLContext(ctx.EAGLContext.API, ctx.EAGLContext.ShareGroup);
+			#endif
 		}
 
 		private void DestroyFramebuffer ()

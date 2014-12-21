@@ -71,7 +71,8 @@ namespace Microsoft.Xna.Framework
         static int mainThreadId;
 #endif
 
-#if ANDROID
+		//EVERSOR on IOS WE USE SAME THREADING THAT WE USE ON ANDROID
+#if ANDROID || IOS
         static List<Action> actions = new List<Action>();
         //static Mutex actionsMutex = new Mutex();
 #elif IOS
@@ -178,8 +179,8 @@ namespace Microsoft.Xna.Framework
 #endif
                 return;
             }
-
-#if IOS
+			//EVERSOR We use the same threading on ios and on android
+#if !IOS
             lock (BackgroundContext)
             {
                 // Make the context current on this thread if it is not already
@@ -214,6 +215,7 @@ namespace Microsoft.Xna.Framework
             Add(() =>
 #endif
             {
+					//EVERSOR NEED THIS ON IOS?
 #if ANDROID
                 //if (!Game.Instance.Window.GraphicsContext.IsCurrent)
                 ((AndroidGameWindow)Game.Instance.Window).GameView.MakeCurrent();
@@ -226,7 +228,7 @@ namespace Microsoft.Xna.Framework
 #endif
         }
 
-#if ANDROID
+#if ANDROID || IOS
         static void Add(Action action)
         {
             lock (actions)
@@ -236,9 +238,9 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
-        /// Runs all pending actions.  Must be called from the UI thread.
+        /// Runs all pending actions.  Must be called from the UI thread. 
         /// </summary>
-        internal static void Run()
+        public static void Run()
         {
             EnsureUIThread();
 
