@@ -248,12 +248,15 @@ namespace Microsoft.Xna.Framework.Content
             return result;
 		}
 		
-		protected virtual Stream OpenStream(string assetName)
+		public virtual Stream OpenStream(string assetName)
 		{
 			Stream stream;
 			try
             {
-                string assetPath = Path.Combine(RootDirectory, assetName) + ".xnb";
+                string assetPath = Path.Combine(RootDirectory, assetName) ;
+                if (!Path.HasExtension(assetPath))
+                    assetPath += ".xnb";
+
                 stream = TitleContainer.OpenStream(assetPath);
 
 #if ANDROID

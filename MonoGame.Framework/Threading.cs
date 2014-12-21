@@ -67,11 +67,9 @@ namespace Microsoft.Xna.Framework
     {
         public const int kMaxWaitForUIThread = 750; // In milliseconds
 
-#if !WINDOWS_PHONE
         static int mainThreadId;
-#endif
 
-#if ANDROID
+#if ANDROID || WINDOWS_PHONE
         static List<Action> actions = new List<Action>();
         //static Mutex actionsMutex = new Mutex();
 #elif IOS
@@ -81,7 +79,6 @@ namespace Microsoft.Xna.Framework
         public static IWindowInfo WindowInfo;
 #endif
 
-#if !WINDOWS_PHONE
         static Threading()
         {
 #if WINDOWS_STOREAPP
@@ -90,7 +87,6 @@ namespace Microsoft.Xna.Framework
             mainThreadId = Thread.CurrentThread.ManagedThreadId;
 #endif
         }
-#endif
 
         /// <summary>
         /// Checks if the code is currently running on the UI thread.
@@ -98,9 +94,7 @@ namespace Microsoft.Xna.Framework
         /// <returns>true if the code is currently running on the UI thread.</returns>
         public static bool IsOnUIThread()
         {
-#if WINDOWS_PHONE
-            return Deployment.Current.Dispatcher.CheckAccess();
-#elif WINDOWS_STOREAPP
+#if WINDOWS_STOREAPP
             return (mainThreadId == Environment.CurrentManagedThreadId);
 #else
             return mainThreadId == Thread.CurrentThread.ManagedThreadId;
@@ -116,36 +110,6 @@ namespace Microsoft.Xna.Framework
             if (!IsOnUIThread())
                 throw new InvalidOperationException("Operation not called on UI thread.");
         }
-
-#if WINDOWS_PHONE
-        internal static void RunOnUIThread(Action action)
-        {
-            RunOnContainerThread(Deployment.Current.Dispatcher, action);
-        }
-        
-        internal static void RunOnContainerThread(System.Windows.Threading.Dispatcher target, Action action)
-        {
-            target.BeginInvoke(action);
-        }
-
-        internal static void BlockOnContainerThread(System.Windows.Threading.Dispatcher target, Action action)
-        {
-            if (target.CheckAccess())
-            {
-                action();
-            }
-            else
-            {
-                EventWaitHandle wait = new AutoResetEvent(false);
-                target.BeginInvoke(() =>
-                {
-                    action();
-                    wait.Set();
-                });
-                wait.WaitOne();
-            }
-        }
-#endif
 
         /// <summary>
         /// Runs the given action on the UI thread and blocks the current thread while the action is running.
@@ -163,22 +127,9 @@ namespace Microsoft.Xna.Framework
             // If we are already on the UI thread, just call the action and be done with it
             if (IsOnUIThread())
             {
-#if WINDOWS_PHONE
-                try
-                {
-                    action();
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // Need to be on a different thread
-                    BlockOnContainerThread(Deployment.Current.Dispatcher, action);
-                }
-#else
                 action();
-#endif
                 return;
             }
-
 #if IOS
             lock (BackgroundContext)
             {
@@ -204,8 +155,6 @@ namespace Microsoft.Xna.Framework
                 // Must make the context not current on this thread or the next thread will get error 170 from the MakeCurrent call
                 BackgroundContext.MakeCurrent(null);
             }
-#elif WINDOWS_PHONE
-            BlockOnContainerThread(Deployment.Current.Dispatcher, action);
 #else
             ManualResetEventSlim resetEvent = new ManualResetEventSlim(false);
 #if MONOMAC
@@ -226,7 +175,7 @@ namespace Microsoft.Xna.Framework
 #endif
         }
 
-#if ANDROID
+#if ANDROID || IOS || LINUX || MAC || WINDOWS_PHONE
         static void Add(Action action)
         {
             lock (actions)
@@ -238,7 +187,7 @@ namespace Microsoft.Xna.Framework
         /// <summary>
         /// Runs all pending actions.  Must be called from the UI thread.
         /// </summary>
-        internal static void Run()
+        public static void Run()
         {
             EnsureUIThread();
 
