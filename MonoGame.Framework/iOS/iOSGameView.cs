@@ -284,7 +284,7 @@ namespace Microsoft.Xna.Framework {
 				//        to go away someday.
 				gds.GraphicsDevice.glFramebuffer = _framebuffer;
 			}
-			//EVERSOR we don't need to set this as GPU stuff is done on the main thread (i hope)
+//EVERSOR we don't need to set this as GPU stuff is done on the main thread (i hope)
 			#if FALSE
             if (Threading.BackgroundContext == null)
                 Threading.BackgroundContext = new OpenGLES.EAGLContext(ctx.EAGLContext.API, ctx.EAGLContext.ShareGroup);
