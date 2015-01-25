@@ -2,7 +2,10 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.Xna.Framework.Graphics
 {
+//	controllare se adesso funziona
+	#if !__IOS__
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+	#endif
     public struct VertexPositionColorTexture : IVertexType
     {
         public Vector3 Position;
