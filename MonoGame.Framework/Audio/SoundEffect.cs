@@ -106,9 +106,13 @@ namespace Microsoft.Xna.Framework.Audio
 			_duration = TimeSpan.FromSeconds (duration);
 		}
 		#endif
-        /// <param name="buffer">Buffer containing PCM wave data.</param>
-        /// <param name="sampleRate">Sample rate, in Hertz (Hz)</param>
-        /// <param name="channels">Number of channels (mono or stereo).</param>
+        /// <summary>
+        /// Create a sound effect.
+        /// </summary>
+        /// <param name="buffer">The buffer with the sound data.</param>
+        /// <param name="sampleRate">The sound data sample rate in hertz.</param>
+        /// <param name="channels">The number of channels in the sound data.</param>
+        /// <remarks>This only supports uncompressed 16bit PCM wav data.</remarks>
         public SoundEffect(byte[] buffer, int sampleRate, AudioChannels channels)
              : this(buffer, 0, buffer != null ? buffer.Length : 0, sampleRate, channels, 0, 0)
         {

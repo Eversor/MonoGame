@@ -1,4 +1,3 @@
-
 #if !(ANDROID && !OPENAL)
 using System;
 using System.Collections.Generic;
@@ -66,8 +65,8 @@ namespace Microsoft.Xna.Framework.Audio
         }
     }
 
-	internal sealed class OpenALSoundController : IDisposable
-	{
+    internal sealed class OpenALSoundController : IDisposable
+    {
         private static OpenALSoundController _instance = null;
         private static EffectsExtension _efx = null;
         private IntPtr _device;
@@ -109,7 +108,7 @@ namespace Microsoft.Xna.Framework.Audio
         /// Sets up the hardware resources used by the controller.
         /// </summary>
 		private OpenALSoundController()
-		{
+        {
             if (!OpenSoundController())
             {
                 throw new NoAudioHardwareException("OpenAL device could not be initialized, see console output for details.");
@@ -248,12 +247,12 @@ namespace Microsoft.Xna.Framework.Audio
                         case AVAudioSessionInterruptionType.Began:
                             AVAudioSession.SharedInstance().SetActive(false);
                             Alc.MakeContextCurrent(IntPtr.Zero);
-                    Alc.SuspendContext(_context);
+                            Alc.SuspendContext(_context);
                             break;
                         case AVAudioSessionInterruptionType.Ended:
                             AVAudioSession.SharedInstance().SetActive(true);
-                    Alc.MakeContextCurrent(_context);
-                    Alc.ProcessContext(_context);
+                            Alc.MakeContextCurrent(_context);
+                            Alc.ProcessContext(_context);
                             break;
                     }
                 };
@@ -284,10 +283,10 @@ namespace Microsoft.Xna.Framework.Audio
                     SupportsEfx = AL.IsExtensionPresent("AL_EXT_EFX");
                     SupportsIeee = AL.IsExtensionPresent("AL_EXT_float32");
                     return true;
-                    }
                 }
-            return false;
             }
+            return false;
+        }
 
 		public static OpenALSoundController GetInstance
         {
@@ -310,9 +309,9 @@ namespace Microsoft.Xna.Framework.Audio
         }
 
         public int Filter
-		{
+        {
             get; private set;
-			}
+        }
 
         public static void DestroyInstance()
         {
@@ -320,27 +319,27 @@ namespace Microsoft.Xna.Framework.Audio
             {
                 _instance.Dispose();
                 _instance = null;
-		}
+            }
         }
 
         /// <summary>
         /// Destroys the AL context and closes the device, when they exist.
         /// </summary>
-		private void CleanUpOpenAL()
-		{
+        private void CleanUpOpenAL()
+        {
             Alc.MakeContextCurrent(NullContext);
 
             if (_context != NullContext)
             {
-				Alc.DestroyContext (_context);
+                Alc.DestroyContext (_context);
                 _context = NullContext;
-			}
+            }
             if (_device != IntPtr.Zero)
             {
-				Alc.CloseDevice (_device);
-				_device = IntPtr.Zero;
-			}
-		}
+                Alc.CloseDevice (_device);
+                _device = IntPtr.Zero;
+            }
+        }
 
         /// <summary>
         /// Dispose of the OpenALSoundCOntroller.
@@ -375,7 +374,7 @@ namespace Microsoft.Xna.Framework.Audio
                         Efx.DeleteFilter(Filter);
 
                     Microphone.StopMicrophones();
-                        CleanUpOpenAL();
+                    CleanUpOpenAL();                    
                 }
                 _isDisposed = true;
             }
@@ -392,11 +391,11 @@ namespace Microsoft.Xna.Framework.Audio
             int sourceNumber;
 
             lock (availableSourcesCollection)
-		{
+            {                
                 if (availableSourcesCollection.Count == 0)
-            {
+                {
                     throw new InstancePlayLimitException();
-            }
+                }
 
                 sourceNumber = availableSourcesCollection.Last();
                 inUseSourcesCollection.Add(sourceNumber);
@@ -404,7 +403,7 @@ namespace Microsoft.Xna.Framework.Audio
             }
 
             return sourceNumber;
-            }
+		}
 
         public void RecycleSource(int sourceId)
 		{
@@ -421,7 +420,7 @@ namespace Microsoft.Xna.Framework.Audio
             inst.SourceId = 0;
             inst.HasSourceId = false;
             inst.SoundState = SoundState.Stopped;
-            }
+		}
 
         public double SourceCurrentPosition (int sourceId)
 		{
@@ -436,14 +435,14 @@ namespace Microsoft.Xna.Framework.Audio
         {
             // Pause all currently playing sounds by pausing the mixer
             Alc.DevicePause(_device);
-            }
+        }
 
         void Activity_Resumed(object sender, EventArgs e)
         {
             // Resume all sounds that were playing when the activity was paused
             Alc.DeviceResume(_device);
-            }
+        }
 #endif
-	}
+    }
 }
 #endif

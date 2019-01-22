@@ -13,6 +13,7 @@ using MonoGame.OpenAL;
 using AudioToolbox;
 using AudioUnit;
 #endif
+
 namespace Microsoft.Xna.Framework.Audio
 {
     public sealed partial class SoundEffect : IDisposable
@@ -28,7 +29,7 @@ namespace Microsoft.Xna.Framework.Audio
         private void PlatformLoadAudioStream(Stream stream, out TimeSpan duration)
         {
             byte[] buffer;
-            
+
             ALFormat format;
             int freq;
             int channels;
@@ -44,15 +45,15 @@ namespace Microsoft.Xna.Framework.Audio
         }
 
         private void PlatformInitializePcm(byte[] buffer, int offset, int count, int sampleBits, int sampleRate, AudioChannels channels, int loopStart, int loopLength)
-            {
+        {
             if (sampleBits == 24)
-                {
+            {
                 // Convert 24-bit signed PCM to 16-bit signed PCM
                 buffer = AudioLoader.Convert24To16(buffer, offset, count);
                 offset = 0;
                 count = buffer.Length;
                 sampleBits = 16;
-                }
+            }
 
             var format = AudioLoader.GetSoundFormat(AudioLoader.FormatPcm, (int)channels, sampleBits);
 
@@ -60,9 +61,9 @@ namespace Microsoft.Xna.Framework.Audio
             SoundBuffer = new OALSoundBuffer();
             SoundBuffer.BindDataBuffer(buffer, format, count, sampleRate);
         }
-			//Ok so this works only for WAV, we use audioFileStream to get sampling data etc...
+
         private void PlatformInitializeIeeeFloat(byte[] buffer, int offset, int count, int sampleRate, AudioChannels channels, int loopStart, int loopLength)
-            {
+        {
             if (!OpenALSoundController.GetInstance.SupportsIeee)
             {
                 // If 32-bit IEEE float is not supported, convert to 16-bit signed PCM
@@ -79,14 +80,14 @@ namespace Microsoft.Xna.Framework.Audio
         }
 
         private void PlatformInitializeAdpcm(byte[] buffer, int offset, int count, int sampleRate, AudioChannels channels, int blockAlignment, int loopStart, int loopLength)
-                {
+        {
             if (!OpenALSoundController.GetInstance.SupportsAdpcm)
-                    {
+            {
                 // If MS-ADPCM is not supported, convert to 16-bit signed PCM
                 buffer = AudioLoader.ConvertMsAdpcmToPcm(buffer, offset, count, (int)channels, blockAlignment);
                 PlatformInitializePcm(buffer, 0, buffer.Length, 16, sampleRate, channels, loopStart, loopLength);
                 return;
-                    }
+            }
 
             var format = AudioLoader.GetSoundFormat(AudioLoader.FormatMsAdpcm, (int)channels, 0);
             int sampleAlignment = AudioLoader.SampleAlignment(format, blockAlignment);
@@ -105,7 +106,7 @@ namespace Microsoft.Xna.Framework.Audio
                 // If IMA/ADPCM is not supported, convert to 16-bit signed PCM
                 buffer = AudioLoader.ConvertIma4ToPcm(buffer, offset, count, (int)channels, blockAlignment);
                 PlatformInitializePcm(buffer, 0, buffer.Length, 16, sampleRate, channels, loopStart, loopLength);
-            return;
+                return;
             }
 
             var format = AudioLoader.GetSoundFormat(AudioLoader.FormatIma4, (int)channels, 0);
@@ -152,7 +153,7 @@ namespace Microsoft.Xna.Framework.Audio
                     break;
                 default:
                     throw new NotSupportedException("Unsupported wave format!");
-        }
+            }
         }
 
         private void PlatformInitializeXact(MiniFormatTag codec, byte[] buffer, int channels, int sampleRate, int blockAlignment, int loopStart, int loopLength, out TimeSpan duration)
@@ -222,7 +223,7 @@ namespace Microsoft.Xna.Framework.Audio
             efx.BindEffectToAuxiliarySlot (ReverbSlot, ReverbEffect);
         }
 
-        #region IDisposable Members
+#region IDisposable Members
 
         private void PlatformDispose(bool disposing)
         {
@@ -230,10 +231,10 @@ namespace Microsoft.Xna.Framework.Audio
             {
                 SoundBuffer.Dispose();
                 SoundBuffer = null;
-        }
+            }
         }
 
-        #endregion
+#endregion
 
         internal static void InitializeSoundEffect()
         {

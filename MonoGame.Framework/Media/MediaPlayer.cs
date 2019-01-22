@@ -123,7 +123,7 @@ namespace Microsoft.Xna.Framework.Media
             _numSongsInQueuePlayed = 0;
             _queue.Add(song);
             _queue.ActiveSongIndex = 0;
-
+            
             PlaySong(song, startPosition);
 
             if (previousSong != song)
@@ -184,9 +184,10 @@ namespace Microsoft.Xna.Framework.Media
         {
             if (State == MediaState.Stopped)
                 return;
+
             PlatformStop();
-            State = MediaState.Stopped;
-        }
+			State = MediaState.Stopped;
+		}
 		
 		public static void MoveNext()
 		{

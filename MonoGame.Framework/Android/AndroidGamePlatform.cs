@@ -26,7 +26,7 @@ namespace Microsoft.Xna.Framework
             try
             {
                 OpenALSoundController soundControllerInstance = OpenALSoundController.GetInstance;
-        }
+            }
             catch (DllNotFoundException ex)
             {
                 throw (new NoAudioHardwareException("Failed to init OpenALSoundController", ex));
@@ -59,7 +59,7 @@ namespace Microsoft.Xna.Framework
 
         public override void StartRunLoop()
         {
-			_gameWindow.GameView.Resume();
+            _gameWindow.GameView.Resume();
         }
 
         public override bool BeforeUpdate(GameTime gameTime)
@@ -100,7 +100,7 @@ namespace Microsoft.Xna.Framework
         {
 
             // Run it as fast as we can to allow for more response on threaded GPU resource creation
-			_gameWindow.GameView.Run();
+            _gameWindow.GameView.Run();
 
             return false;
         }
@@ -140,8 +140,8 @@ namespace Microsoft.Xna.Framework
             }
         }
 
-		MediaState _MediaPlayer_PrevState = MediaState.Stopped;
-	    // EnterBackground
+        MediaState _MediaPlayer_PrevState = MediaState.Stopped;
+        // EnterBackground
         void Activity_Paused(object sender, EventArgs e)
         {
             if (IsActive)
@@ -162,14 +162,14 @@ namespace Microsoft.Xna.Framework
         {
             get { return GameRunBehavior.Asynchronous; }
         }
-		
-		public override void Log(string Message) 
-		{
+
+        public override void Log(string Message)
+        {
 #if LOGGING
-			Android.Util.Log.Debug("MonoGameDebug", Message);
+            Android.Util.Log.Debug("MonoGameDebug", Message);
 #endif
-		}
-		
+        }
+
         public override void Present()
         {
             try
@@ -178,7 +178,7 @@ namespace Microsoft.Xna.Framework
                 if (device != null)
                     device.Present();
 
-				_gameWindow.GameView.SwapBuffers();
+                _gameWindow.GameView.SwapBuffers();
             }
             catch (Exception ex)
             {

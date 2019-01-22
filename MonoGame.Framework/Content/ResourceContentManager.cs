@@ -19,7 +19,7 @@ namespace Microsoft.Xna.Framework.Content
             this.resource = resource;
         }
 
-        public override System.IO.Stream OpenStream(string assetName)
+        protected override System.IO.Stream OpenStream(string assetName)
         {
             object obj = this.resource.GetObject(assetName);
             if (obj == null)

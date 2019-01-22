@@ -30,7 +30,7 @@ namespace Microsoft.Xna.Framework.Content
 		private List<IDisposable> disposableAssets = new List<IDisposable>();
         private bool disposed;
         private byte[] scratchBuffer;
-		
+
 		private static object ContentManagerLock = new object();
         private static List<WeakReference> ContentManagers = new List<WeakReference>();
 
@@ -258,7 +258,7 @@ namespace Microsoft.Xna.Framework.Content
             return result;
 		}
 		
-		public virtual Stream OpenStream(string assetName)
+		protected virtual Stream OpenStream(string assetName)
 		{
 			Stream stream;
 			try
@@ -274,7 +274,7 @@ namespace Microsoft.Xna.Framework.Content
                     stream = File.OpenRead(assetPath);                
                 else
 #endif                
-                	stream = TitleContainer.OpenStream(assetPath);
+                stream = TitleContainer.OpenStream(assetPath);
 #if ANDROID
                 // Read the asset into memory in one go. This results in a ~50% reduction
                 // in load times on Android due to slow Android asset streams.
@@ -325,18 +325,18 @@ namespace Microsoft.Xna.Framework.Content
 				}
 			}
 			
-                // Try to load as XNB file
+            // Try to load as XNB file
             var stream = OpenStream(assetName);
             using (var xnbReader = new BinaryReader(stream))
-                {
+            {
                 using (var reader = GetContentReaderFromXnb(assetName, stream, xnbReader, recordDisposableObject))
-                    {
-                            result = reader.ReadAsset<T>();
-                            if (result is GraphicsResource)
-                                ((GraphicsResource)result).Name = originalAssetName;
-                        }
-                    }
-
+                {
+                    result = reader.ReadAsset<T>();
+                    if (result is GraphicsResource)
+                        ((GraphicsResource)result).Name = originalAssetName;
+                }
+            }
+            
 			if (result == null)
 				throw new ContentLoadException("Could not load " + originalAssetName + " asset!");
 
@@ -453,19 +453,19 @@ namespace Microsoft.Xna.Framework.Content
                 {
                     int compressedSize = xnbLength - 14;
                     decompressedStream = new LzxDecoderStream(stream, decompressedSize, compressedSize);
-                        }
-                else if (compressedLz4)
-                    {
-                    decompressedStream = new Lz4DecoderStream(stream);
-                    }
                 }
-            else
+                else if (compressedLz4)
                 {
+                    decompressedStream = new Lz4DecoderStream(stream);
+                }
+            }
+            else
+            {
                 decompressedStream = stream;
-                        }
+            }
 
             var reader = new ContentReader(this, decompressedStream, this.graphicsDeviceService.GraphicsDevice,
-                                                            originalAssetName, version, recordDisposableObject);
+                                                        originalAssetName, version, recordDisposableObject);
             
             return reader;
         }
@@ -503,7 +503,7 @@ namespace Microsoft.Xna.Framework.Content
             }
         }
 
-        public virtual void ReloadAsset<T>(string originalAssetName, T currentAsset)
+        protected virtual void ReloadAsset<T>(string originalAssetName, T currentAsset)
         {
 			string assetName = originalAssetName;
 			if (string.IsNullOrEmpty(assetName))
@@ -523,16 +523,16 @@ namespace Microsoft.Xna.Framework.Content
 					throw new InvalidOperationException("No Graphics Device Service");
 				}
 			}
-			
+
             var stream = OpenStream(assetName);
             using (var xnbReader = new BinaryReader(stream))
-			{
+            {
                 using (var reader = GetContentReaderFromXnb(assetName, stream, xnbReader, null))
                 {
                     reader.ReadAsset<T>(currentAsset);
-                        }
-                    }
                 }
+            }
+		}
 
 		public virtual void Unload()
 		{
@@ -580,6 +580,6 @@ namespace Microsoft.Xna.Framework.Content
             if (scratchBuffer == null || scratchBuffer.Length < size)
                 scratchBuffer = new byte[size];
             return scratchBuffer;
+        }
 	}
-}
 }
