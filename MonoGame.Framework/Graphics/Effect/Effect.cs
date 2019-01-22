@@ -136,8 +136,8 @@ namespace Microsoft.Xna.Framework.Graphics
                 throw new Exception("This does not appear to be a MonoGame MGFX file!");
             if (header.Version < MGFXHeader.MGFXVersion)
                 throw new Exception("This MGFX effect is for an older release of MonoGame and needs to be rebuilt.");
-            if (header.Version > MGFXHeader.MGFXVersion)
-                throw new Exception("This MGFX effect seems to be for a newer release of MonoGame.");
+            //if (header.Version > MGFXHeader.MGFXVersion)
+            //    throw new Exception("This MGFX effect seems to be for a newer release of MonoGame.");
 
 #if DIRECTX
             if (header.Profile != 1)

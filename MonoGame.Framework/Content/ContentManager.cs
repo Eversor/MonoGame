@@ -88,6 +88,7 @@ namespace Microsoft.Xna.Framework.Content
             'r', // RaspberryPi
             'P', // PlayStation4
             'g', // Windows (OpenGL)
+            'd', // Windows (OpenGL)
         };
 
         private static void AddContentManager(ContentManager contentManager)
