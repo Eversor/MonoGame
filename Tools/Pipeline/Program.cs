@@ -3,13 +3,8 @@
 // file 'LICENSE.txt', which is part of this source code package.
 
 using System;
-using System.Diagnostics;
-#if WINDOWS
-using System.Windows.Forms;
-#endif
-#if MONOMAC
-using Gtk;
-#endif
+using Eto;
+using Eto.Forms;
 
 namespace MonoGame.Tools.Pipeline
 {
@@ -19,40 +14,66 @@ namespace MonoGame.Tools.Pipeline
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string [] args)
+        static void Main(string[] args)
         {
-#if WINDOWS
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            Styles.Load();
 
-            History.Default.Load();
+            var app = new Application(Platform.Detect);
+            app.Style = "PipelineTool";
 
-			var view = new MainView();
-            if (args != null && args.Length > 0)
+            PipelineSettings.Default.Load();
+
+            if (!string.IsNullOrEmpty(PipelineSettings.Default.ErrorMessage))
             {
-                var projectFilePath = string.Join(" ", args);
-                view.OpenProjectPath = projectFilePath;
+                var logwin = new LogWindow();
+                logwin.LogText = PipelineSettings.Default.ErrorMessage;
+                app.Run(logwin);
+                return;
             }
 
-            var model = new PipelineProject();
-            var controller = new PipelineController(view, model);   
-            Application.Run(view);
+#if !DEBUG
+            try
 #endif
-#if LINUX || MONOMAC
+            {
+                var win = new MainWindow();
+                var controller = PipelineController.Create(win);
 
-			Gtk.Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show (); 
-			var model = new PipelineProject();
-			new PipelineController(win, model);  
-			if (args != null && args.Length > 0)
-			{
-				var projectFilePath = string.Join(" ", args);
-				win.OpenProjectPath = projectFilePath;
-			}
-			win.OnShowEvent ();
-			Gtk.Application.Run ();
+#if LINUX
+                Global.Application.AddWindow(win.ToNative() as Gtk.Window);
 #endif
+
+#if LINUX && !DEBUG
+
+                GLib.ExceptionManager.UnhandledException += (e) =>
+                {
+                    var logwin = new LogWindow();
+                    logwin.LogText = e.ExceptionObject.ToString();
+
+                    logwin.Show();
+                    win.Close();
+                };
+#endif
+
+                string project = null;
+
+                if (Global.Unix && !Global.Linux)
+                    project = Environment.GetEnvironmentVariable("MONOGAME_PIPELINE_PROJECT");
+                else if (args != null && args.Length > 0)
+                    project = string.Join(" ", args);
+
+                if (!string.IsNullOrEmpty(project))
+                    controller.OpenProject(project);
+                
+                app.Run(win);
+            }
+#if !DEBUG
+            catch (Exception ex)
+            {
+                PipelineSettings.Default.ErrorMessage = ex.ToString();
+                PipelineSettings.Default.Save();
+                app.Restart();
+            }
+# endif
         }
     }
 }

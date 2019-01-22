@@ -21,7 +21,7 @@ namespace MonoGame.Tests.ContentPipeline
 
         public override string BuildConfiguration
         {
-            get { throw new NotImplementedException(); }
+            get { return "Debug"; }
         }
 
         public override string IntermediateDirectory
@@ -49,6 +49,13 @@ namespace MonoGame.Tests.ContentPipeline
             get { throw new NotImplementedException(); }
         }
 
+#if !XNA
+        public override ContentIdentity SourceIdentity
+        {
+            get { throw new NotImplementedException(); }
+        }
+#endif
+
         public override TargetPlatform TargetPlatform
         {
             get { return _targetPlatform; }
@@ -56,7 +63,7 @@ namespace MonoGame.Tests.ContentPipeline
 
         public override GraphicsProfile TargetProfile
         {
-            get { throw new NotImplementedException(); }
+            get { return GraphicsProfile.HiDef; }
         }
 
         public override void AddDependency(string filename)
@@ -84,6 +91,19 @@ namespace MonoGame.Tests.ContentPipeline
             // seems like a reasonable shortcut for testing.
             if (typeof(TOutput) == typeof(MaterialContent) && typeof(TInput).IsAssignableFrom(typeof(MaterialContent)))
                 return (TOutput)((object)input);
+
+            var processor = (ContentProcessor<TInput, TOutput>)typeof(ContentProcessor<TInput, TOutput>).Assembly.CreateInstance("Microsoft.Xna.Framework.Content.Pipeline.Processors."+ processorName);
+            if (processor != null) {
+                var type = processor.GetType();
+                foreach (var kvp in processorParameters)
+                {
+                    var property = type.GetProperty(kvp.Key);
+                    if (property == null)
+                        continue;
+                    property.SetValue(processor, kvp.Value);
+                }
+                return processor.Process(input, this);
+            }
 
             throw new NotImplementedException();
         }

@@ -69,6 +69,8 @@ namespace MonoGame.Tools.Pipeline
             Description = "The optional build config string from the build system.")]
         public string Config { set { _project.Config = value; } }
 
+        #pragma warning disable 414
+
         // Allow a MGCB file containing the /rebuild parameter to be imported without error
         [CommandLineParameter(
             Name = "rebuild",
@@ -84,6 +86,8 @@ namespace MonoGame.Tools.Pipeline
             Description = "Removes intermediate and output files.")]
         public bool Clean { set { _clean = value; } }
         private bool _clean;
+
+        #pragma warning restore 414
 
         [CommandLineParameter(
             Name = "compress",
@@ -137,8 +141,27 @@ namespace MonoGame.Tools.Pipeline
             AddContent(sourceFile, false);
         }
 
+        [CommandLineParameter(
+            Name = "launchDebugger",
+            ValueName = "sourceFile")]
+        public void OnDebug()
+        {
+            _project.LaunchDebugger = true;
+        }
+
         public bool AddContent(string sourceFile, bool skipDuplicates)
         {
+            string link = null;
+
+            if (sourceFile.Contains(";"))
+            {
+                var split = sourceFile.Split(';');
+                sourceFile = split[0];
+
+                if (split.Length > 0)
+                    link = split[1];
+            }
+
             // Make sure the source file is relative to the project.
             var projectDir = ProjectDirectory + Path.DirectorySeparatorChar;
 
@@ -161,10 +184,10 @@ namespace MonoGame.Tools.Pipeline
                 Observer = _observer,
                 BuildAction = BuildAction.Build,
                 OriginalPath = sourceFile,
+                DestinationPath = string.IsNullOrEmpty(link) ? sourceFile : link,
                 ImporterName = Importer,
                 ProcessorName = Processor,
-                ProcessorParams = new OpaqueDataDictionary(),
-                Exists = File.Exists(projectDir + sourceFile)
+                ProcessorParams = new OpaqueDataDictionary()
             };
             _project.ContentItems.Add(item);
 
@@ -183,6 +206,17 @@ namespace MonoGame.Tools.Pipeline
             Description = "Copy the content source file verbatim to the output directory.")]
         public void OnCopy(string sourceFile)
         {
+            string link = null;
+
+            if (sourceFile.Contains(";"))
+            {
+                var split = sourceFile.Split(';');
+                sourceFile = split[0];
+
+                if (split.Length > 0)
+                    link = split[1];
+            }
+
             // Make sure the source file is relative to the project.
             var projectDir = ProjectDirectory + Path.DirectorySeparatorChar;
 
@@ -198,8 +232,8 @@ namespace MonoGame.Tools.Pipeline
             {
                 BuildAction = BuildAction.Copy,
                 OriginalPath = sourceFile,
-                ProcessorParams = new OpaqueDataDictionary(),
-                Exists = File.Exists(projectDir + sourceFile)
+                DestinationPath = string.IsNullOrEmpty(link) ? sourceFile : link,
+                ProcessorParams = new OpaqueDataDictionary()
             };
             _project.ContentItems.Add(item);
 
@@ -271,6 +305,9 @@ namespace MonoGame.Tools.Pipeline
             line = string.Format(lineFormat, "compress", _project.Compress);
             io.WriteLine(line);
 
+            if (_project.LaunchDebugger)
+                io.WriteLine("/launchdebugger");
+
             line = FormatDivider("References");
             io.WriteLine(line);
 
@@ -283,7 +320,11 @@ namespace MonoGame.Tools.Pipeline
             line = FormatDivider("Content");
             io.WriteLine(line);
 
-            foreach (var i in _project.ContentItems)
+            // Sort the items alphabetically to ensure a consistent output
+            // and better mergability of the resulting MGCB file.
+            var sortedItems = _project.ContentItems.OrderBy(c => c.OriginalPath, StringComparer.InvariantCulture);
+
+            foreach (var i in sortedItems)
             {
                 // Reject any items that don't pass the filter.              
                 if (filterItem != null && filterItem(i))
@@ -296,7 +337,10 @@ namespace MonoGame.Tools.Pipeline
 
                 if (i.BuildAction == BuildAction.Copy)
                 {
-                    line = string.Format(lineFormat, "copy", i.OriginalPath);
+                    string path = i.OriginalPath;
+                    if (i.OriginalPath != i.DestinationPath)
+                        path += ";" + i.DestinationPath;
+                    line = string.Format(lineFormat, "copy", path);
                     io.WriteLine(line);
                     io.WriteLine();
                 }
@@ -349,7 +393,10 @@ namespace MonoGame.Tools.Pipeline
                         }
                     }
 
-                    line = string.Format(lineFormat, "build", i.OriginalPath);
+                    string buildValue = i.OriginalPath;
+                    if (i.OriginalPath != i.DestinationPath)
+                        buildValue += ";" + i.DestinationPath;
+                    line = string.Format(lineFormat, "build", buildValue);
                     io.WriteLine(line);
                     io.WriteLine();
                 }

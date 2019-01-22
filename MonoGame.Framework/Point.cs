@@ -17,7 +17,7 @@ namespace Microsoft.Xna.Framework
     {
         #region Private Fields
 
-        private static Point zeroPoint = new Point();
+        private static readonly Point zeroPoint = new Point();
 
         #endregion
 
@@ -67,7 +67,7 @@ namespace Microsoft.Xna.Framework
         #region Constructors
 
         /// <summary>
-        /// Creates a new instance of <see cref="Point"/> struct, with the specified position.
+        /// Constructs a point with X and Y from two values.
         /// </summary>
         /// <param name="x">The x coordinate in 2d-space.</param>
         /// <param name="y">The y coordinate in 2d-space.</param>
@@ -75,6 +75,16 @@ namespace Microsoft.Xna.Framework
         {
             this.X = x;
             this.Y = y;
+        }
+
+        /// <summary>
+        /// Constructs a point with X and Y set to the same value.
+        /// </summary>
+        /// <param name="value">The x and y coordinates in 2d-space.</param>
+        public Point(int value)
+        {
+            this.X = value;
+            this.Y = value;
         }
 
         #endregion
@@ -177,7 +187,14 @@ namespace Microsoft.Xna.Framework
         /// <returns>Hash code of this <see cref="Point"/>.</returns>
         public override int GetHashCode()
         {
-            return X ^ Y;
+            unchecked
+            {
+                var hash = 17;
+                hash = hash * 23 + X.GetHashCode();
+                hash = hash * 23 + Y.GetHashCode();
+                return hash;
+            }
+
         }
 
         /// <summary>
@@ -191,12 +208,23 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
-        /// Gets a two-component <see cref="Vector2"/> representation for this object.
+        /// Gets a <see cref="Vector2"/> representation for this object.
         /// </summary>
-        /// <returns>A two-component <see cref="Vector2"/> representation for this object.</returns>
+        /// <returns>A <see cref="Vector2"/> representation for this object.</returns>
         public Vector2 ToVector2()
         {
             return new Vector2(X, Y);
+        }
+
+        /// <summary>
+        /// Deconstruction method for <see cref="Point"/>.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        public void Deconstruct(out int x, out int y)
+        {
+            x = X;
+            y = Y;
         }
 
         #endregion

@@ -17,9 +17,9 @@ namespace Microsoft.Xna.Framework
     {
         #region Private Fields
 
-        private CurveKeyCollection _keys;
-        private CurveLoopType _postLoop;
         private CurveLoopType _preLoop;
+        private CurveLoopType _postLoop;
+        private CurveKeyCollection _keys;
 
         #endregion
 
@@ -35,16 +35,17 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
-        /// Gets the collection of curve keys.
+        /// Defines how to handle weighting values that are less than the first control point in the curve.
         /// </summary>
         [DataMember]
-        public CurveKeyCollection Keys
+        public CurveLoopType PreLoop
         {
-            get { return this._keys; }
+            get { return this._preLoop; }
+            set { this._preLoop = value; }
         }
 
         /// <summary>
-        /// Gets or sets how to handle weighting values that are greater than the last control point in the curve.
+        /// Defines how to handle weighting values that are greater than the last control point in the curve.
         /// </summary>
         [DataMember]
         public CurveLoopType PostLoop
@@ -54,13 +55,12 @@ namespace Microsoft.Xna.Framework
         }
 
         /// <summary>
-        /// Gets or sets how to handle weighting values that are less than the first control point in the curve.
+        /// The collection of curve keys.
         /// </summary>
         [DataMember]
-        public CurveLoopType PreLoop
+        public CurveKeyCollection Keys
         {
-            get { return this._preLoop; }
-            set { this._preLoop = value; }
+            get { return this._keys; }
         }
 
         #endregion
@@ -68,7 +68,7 @@ namespace Microsoft.Xna.Framework
         #region Public Constructors
 
         /// <summary>
-        /// Creates a new instance of <see cref="Curve"/> class.
+        /// Constructs a curve.
         /// </summary>
         public Curve()
         {
@@ -101,6 +101,16 @@ namespace Microsoft.Xna.Framework
         /// <returns>Value at the position on this <see cref="Curve"/>.</returns>
         public float Evaluate(float position)
         {
+            if (_keys.Count == 0)
+            {
+            	return 0f;
+            }
+						
+            if (_keys.Count == 1)
+            {
+            	return _keys[0].Value;
+            }
+			
             CurveKey first = _keys[0];
             CurveKey last = _keys[_keys.Count - 1];
 
