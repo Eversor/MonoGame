@@ -152,10 +152,5 @@ namespace Microsoft.Xna.Framework.Input.Touch
         {
             get { return PrimaryWindow.TouchPanelState.IsGestureAvailable; }
         }
-
-		public static void Clear()
-		{
-			PrimaryWindow.TouchPanelState.Clear ();
-		}
     }
 }
