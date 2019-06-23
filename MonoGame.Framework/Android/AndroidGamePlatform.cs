@@ -122,9 +122,6 @@ namespace Microsoft.Xna.Framework
             {
                 IsActive = true;
                 _gameWindow.GameView.Resume();
-#if ANDROID && (!OPENAL)
-                SoundEffectInstance.SoundPool.AutoResume();
-#endif
                 if (_MediaPlayer_PrevState == MediaState.Playing && Game.Activity.AutoPauseAndResumeMediaPlayer)
                     MediaPlayer.Resume();
                 if (!_gameWindow.GameView.IsFocused)

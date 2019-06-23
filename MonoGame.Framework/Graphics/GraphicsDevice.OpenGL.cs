@@ -1286,16 +1286,5 @@ namespace Microsoft.Xna.Framework.Graphics
             height = mode.Height;
         }
 #endif
-		public void DisposeAll()
-		{
-			// Dispose of any GL resources that were disposed in another thread
-			if (disposeActions.Count > 0) {
-				lock (disposeActionsLock) {
-					foreach (var action in disposeActions)
-						action ();
-					disposeActions.Clear ();
-				}
-			}
-		}
     }
 }

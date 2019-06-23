@@ -2,7 +2,6 @@
 // This file is subject to the terms and conditions defined in
 // file 'LICENSE.txt', which is part of this source code package.
 
-#if !(ANDROID && !OPENAL)
 using System;
 using MonoGame.OpenAL;
 
@@ -355,4 +354,3 @@ namespace Microsoft.Xna.Framework.Audio
         }
     }
 }
-#endif

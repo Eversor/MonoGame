@@ -78,17 +78,8 @@ namespace Microsoft.Xna.Framework
             // Allow some optional per-platform construction to occur too.
             PlatformConstruct();
 
-#if WINDOWS_STOREAPP && !WINDOWS_PHONE81
-			Platform.ViewStateChanged += Platform_ApplicationViewChanged;
-#elif IOS
-			iosRViewController=((iOSGamePlatform)Platform).ViewController;
-#endif
         }
-		
-		#if IOS
-		public MonoTouch.UIKit.UIViewController iosRViewController;
-		#endif
-		
+
         ~Game()
         {
             Dispose(false);
@@ -180,7 +171,7 @@ namespace Microsoft.Xna.Framework
         public static AndroidGameActivity Activity { get; internal set; }
 #endif
         private static Game _instance = null;
-        public static Game Instance { get { return Game._instance; } }
+        internal static Game Instance { get { return Game._instance; } }
 
         public LaunchParameters LaunchParameters { get; private set; }
 
@@ -222,7 +213,6 @@ namespace Microsoft.Xna.Framework
         public bool IsActive
         {
             get { return Platform.IsActive; }
-            set { Platform.IsActive = value; }
         }
 
         public bool IsMouseVisible

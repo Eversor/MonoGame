@@ -63,7 +63,6 @@ namespace Microsoft.Xna.Framework.Content
             'p', // PlayStationMobile
             'g', // Windows (OpenGL)
             'l', // Linux
-            'd' // Windows (OpenGL)
         };
 
 
@@ -263,9 +262,8 @@ namespace Microsoft.Xna.Framework.Content
 			Stream stream;
 			try
             {
-                string assetPath = Path.Combine(RootDirectory, assetName);
-				if(!Path.HasExtension(assetName))
-					assetPath+= ".xnb";
+                var assetPath = Path.Combine(RootDirectory, assetName) + ".xnb";
+
                 // This is primarily for editor support. 
                 // Setting the RootDirectory to an absolute path is useful in editor
                 // situations, but TitleContainer can ONLY be passed relative paths.                
@@ -344,79 +342,6 @@ namespace Microsoft.Xna.Framework.Content
 		}
 
         private ContentReader GetContentReaderFromXnb(string originalAssetName, Stream stream, BinaryReader xnbReader, Action<IDisposable> recordDisposableObject)
-        {
-            if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
-            {
-                return Texture2DReader.Normalize(assetName);
-            }
-            else if ((typeof(T) == typeof(SpriteFont)))
-            {
-                return SpriteFontReader.Normalize(assetName);
-            }
-#if !WINRT
-            else if ((typeof(T) == typeof(Song)))
-            {
-                return SongReader.Normalize(assetName);
-            }
-            else if ((typeof(T) == typeof(SoundEffect)))
-            {
-                return SoundEffectReader.Normalize(assetName);
-            }
-#endif
-            else if ((typeof(T) == typeof(Effect)))
-            {
-                return EffectReader.Normalize(assetName);
-            }
-            return null;
-        }
-
-        protected virtual object ReadRawAsset<T>(string assetName, string originalAssetName)
-        {
-            if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
-            {
-                using (Stream assetStream = TitleContainer.OpenStream(assetName))
-                {
-                    Texture2D texture = Texture2D.FromStream(
-                        graphicsDeviceService.GraphicsDevice, assetStream);
-                    texture.Name = originalAssetName;
-                    return texture;
-                }
-            }
-            else if ((typeof(T) == typeof(SpriteFont)))
-            {
-                //result = new SpriteFont(Texture2D.FromFile(graphicsDeviceService.GraphicsDevice,assetName), null, null, null, 0, 0.0f, null, null);
-                throw new NotImplementedException();
-            }
-#if !DIRECTX
-            else if ((typeof(T) == typeof(Song)))
-            {
-                return new Song(assetName);
-            }
-            else if ((typeof(T) == typeof(SoundEffect)))
-            {
-		#if ANDROID && !OPENAL
-				return new SoundEffect(assetName);
-		#elif IOS
-				return new SoundEffect(assetName);
-		#else
-                using (Stream s = TitleContainer.OpenStream(assetName))
-                    return SoundEffect.FromStream(s);
-		#endif
-            }
-#endif
-            else if ((typeof(T) == typeof(Effect)))
-            {
-                using (Stream assetStream = TitleContainer.OpenStream(assetName))
-                {
-                    var data = new byte[assetStream.Length];
-                    assetStream.Read(data, 0, (int)assetStream.Length);
-                    return new Effect(this.graphicsDeviceService.GraphicsDevice, data);
-                }
-            }
-            return null;
-        }
-
-        private ContentReader GetContentReaderFromXnb(string originalAssetName, ref Stream stream, BinaryReader xnbReader, Action<IDisposable> recordDisposableObject)
         {
             // The first 4 bytes should be the "XNB" header. i use that to detect an invalid file
             byte x = xnbReader.ReadByte();

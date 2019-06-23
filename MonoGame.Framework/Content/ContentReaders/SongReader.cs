@@ -11,18 +11,6 @@ namespace Microsoft.Xna.Framework.Content
 {
 	internal class SongReader : ContentTypeReader<Song>
 	{
-#if ANDROID
-        static string[] supportedExtensions = new string[] { ".mp3", ".ogg", ".mid" };
-#elif IOS
-        static string[] supportedExtensions = new string[] { ".mp3", ".m4a" };
-#else
-        static string[] supportedExtensions = new string[] { ".mp3" };
-#endif
-
-        internal static string Normalize(string fileName)
-		{
-			return Normalize(fileName, supportedExtensions);
-		}
 		protected internal override Song Read(ContentReader input, Song existingInstance)
 		{
 			var path = input.ReadString();

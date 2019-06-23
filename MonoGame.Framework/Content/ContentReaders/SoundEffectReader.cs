@@ -10,19 +10,6 @@ namespace Microsoft.Xna.Framework.Content
 {
 	internal class SoundEffectReader : ContentTypeReader<SoundEffect>
 	{
-#if ANDROID
-        static string[] supportedExtensions = new string[] { ".wav", ".mp3", ".ogg", ".mid" };
-#elif IOS
-        static string[] supportedExtensions = new string[] { ".wav", ".aiff", ".ac3", ".mp3" , ".m4a" };
-#else
-        static string[] supportedExtensions = new string[] { ".wav", ".aiff", ".ac3", ".mp3" };
-#endif
-
-        internal static string Normalize(string fileName)
-        {
-            return Normalize(fileName, supportedExtensions);
-        }
-
 		protected internal override SoundEffect Read(ContentReader input, SoundEffect existingInstance)
 		{         
             // XNB format for SoundEffect...
@@ -47,7 +34,7 @@ namespace Microsoft.Xna.Framework.Content
             //
             // We let the sound effect deal with parsing this based
             // on what format the audio data actually is.
-            
+
 		    var headerSize = input.ReadInt32();
             var header = input.ReadBytes(headerSize);
 
@@ -62,11 +49,11 @@ namespace Microsoft.Xna.Framework.Content
 
             // Create the effect.
             var effect = new SoundEffect(header, data, dataSize, durationMs, loopStart, loopLength);
-                
+
             // Store the original asset name for debugging later.
             effect.Name = input.AssetName;
-            
+
             return effect;
-		}
+        }
 	}
 }

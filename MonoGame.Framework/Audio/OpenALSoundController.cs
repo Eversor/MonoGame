@@ -1,4 +1,3 @@
-#if !(ANDROID && !OPENAL)
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -468,4 +467,3 @@ namespace Microsoft.Xna.Framework.Audio
 #endif
     }
 }
-#endif
